@@ -1,7 +1,7 @@
 import express from 'express';
 import pool from '../config/database.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -54,27 +54,29 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user info
-router.get('/me', async (req, res) => {
+router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ error: 'Access token required' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    
     const [rows] = await pool.execute(
       'SELECT UserName, HoTen, Email, SoDT, DiaChi, Tuoi FROM user WHERE UserName = ?',
-      [decoded.username]
+      [req.user.username]
     );
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ user: rows[0] });
+    const user = rows[0];
+    // Return consistent format with login endpoint
+    res.json({
+      user: {
+        username: user.UserName,
+        hoTen: user.HoTen,
+        email: user.Email,
+        soDT: user.SoDT,
+        diaChi: user.DiaChi,
+        tuoi: user.Tuoi
+      }
+    });
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -82,16 +84,8 @@ router.get('/me', async (req, res) => {
 });
 
 // Change password
-router.put('/change-password', async (req, res) => {
+router.put('/change-password', authenticateToken, async (req, res) => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ error: 'Access token required' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword || !newPassword) {
@@ -100,7 +94,7 @@ router.put('/change-password', async (req, res) => {
 
     const [rows] = await pool.execute(
       'SELECT Password FROM user WHERE UserName = ?',
-      [decoded.username]
+      [req.user.username]
     );
 
     if (rows.length === 0 || rows[0].Password !== oldPassword) {
@@ -109,7 +103,7 @@ router.put('/change-password', async (req, res) => {
 
     await pool.execute(
       'UPDATE user SET Password = ? WHERE UserName = ?',
-      [newPassword, decoded.username]
+      [newPassword, req.user.username]
     );
 
     res.json({ message: 'Password changed successfully' });
@@ -120,21 +114,13 @@ router.put('/change-password', async (req, res) => {
 });
 
 // Update user info
-router.put('/update-info', async (req, res) => {
+router.put('/update-info', authenticateToken, async (req, res) => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-      return res.status(401).json({ error: 'Access token required' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const { hoTen, email, soDT, diaChi, tuoi } = req.body;
 
     await pool.execute(
       'UPDATE user SET HoTen = ?, Email = ?, SoDT = ?, DiaChi = ?, Tuoi = ? WHERE UserName = ?',
-      [hoTen, email, soDT, diaChi, tuoi, decoded.username]
+      [hoTen, email, soDT, diaChi, tuoi, req.user.username]
     );
 
     res.json({ message: 'User info updated successfully' });

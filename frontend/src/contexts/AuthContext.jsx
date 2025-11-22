@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       fetchUser();
     } else {
       setLoading(false);
@@ -22,25 +21,28 @@ export function AuthProvider({ children }) {
       const response = await api.get('/auth/me');
       setUser(response.data.user);
     } catch (error) {
+      // Token is invalid or expired, clear it
       localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   const login = async (username, password) => {
+    try {
     const response = await api.post('/auth/login', { username, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(user);
     return user;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
