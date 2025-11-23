@@ -1,0 +1,104 @@
+╔════════════════════════════════════════════════════════════════╗
+║         HỆ THỐNG QUẢN LÝ CHUNG CƯ - HƯỚNG DẪN KHỞI ĐỘNG      ║
+╚════════════════════════════════════════════════════════════════╝
+
+📌 YÊU CẦU TRƯỚC TIÊN:
+   1. Đã cài XAMPP (download tại: https://www.apachefriends.org/)
+   2. Đã cài Node.js (download tại: https://nodejs.org/)
+      → SAU KHI CÀI NODE.JS, PHẢI RESTART MÁY TÍNH!
+
+
+════════════════════════════════════════════════════════════════
+
+🚀 CÁCH CHẠY ĐƠN GIẢN NHẤT (3 BƯỚC):
+
+════════════════════════════════════════════════════════════════
+
+BƯỚC 1: TẠO DATABASE TRÊN XAMPP
+   ┌─────────────────────────────────────────────────────────┐
+   │ 1. Mở XAMPP Control Panel                               │
+   │ 2. Bấm "Start" cho MySQL (phải có màu xanh)             │
+   │ 3. Mở trình duyệt: http://localhost/phpmyadmin          │
+   │ 4. Bấm "New" → Đặt tên: qlchungcu → Bấm "Create"       │
+   │ 5. Chọn database "qlchungcu" vừa tạo                    │
+   │ 6. Bấm tab "Import" → Chọn file: Database/qlchungcu.sql │
+   │ 7. Bấm "Go" (Chạy) ở dưới cùng                          │
+   └─────────────────────────────────────────────────────────┘
+
+
+BƯỚC 2: TẠO FILE CẤU HÌNH
+   ┌─────────────────────────────────────────────────────────┐
+   │ → Double-click file: TAO_FILE_ENV.bat                   │
+   │ → Làm theo hướng dẫn                                    │
+   │                                                          │
+   │ HOẶC tự tạo:                                            │
+   │ → Vào thư mục "backend"                                 │
+   │ → Tạo file tên: .env (có dấu chấm ở đầu)                │
+   │ → Copy nội dung sau vào:                                │
+   │                                                          │
+   │   PORT=5000                                              │
+   │   DB_HOST=localhost                                      │
+   │   DB_USER=root                                           │
+   │   DB_PASSWORD=                                           │
+   │   DB_NAME=qlchungcu                                      │
+   │   JWT_SECRET=your-secret-key-123456                      │
+   │                                                          │
+   │ (Nếu MySQL có mật khẩu, sửa dòng DB_PASSWORD= thành    │
+   │  DB_PASSWORD=mật_khẩu_của_bạn)                          │
+   └─────────────────────────────────────────────────────────┘
+
+
+BƯỚC 3: CHẠY PROJECT
+   ┌─────────────────────────────────────────────────────────┐
+   │ → Double-click file: RUN_PROJECT.bat                    │
+   │ → Đợi vài giây (lần đầu sẽ tự động cài đặt)             │
+   │ → Sẽ mở 2 cửa sổ Command Prompt:                        │
+   │   • Cửa sổ 1: Backend (port 5000)                       │
+   │   • Cửa sổ 2: Frontend (port 3000)                      │
+   │ → Đợi đến khi thấy "Server is running"                  │
+   │ → Mở trình duyệt: http://localhost:3000                 │
+   │ → Đăng nhập:                                            │
+   │   Username: admin                                        │
+   │   Password: 123456                                       │
+   └─────────────────────────────────────────────────────────┘
+
+
+════════════════════════════════════════════════════════════════
+
+❓ NẾU GẶP LỖI:
+
+   → "npm is not recognized"
+     → PHẢI CÀI NODE.JS TRƯỚC!
+     → Sau khi cài, RESTART máy tính
+
+   → "Cannot connect to database"
+     → Kiểm tra XAMPP MySQL đã bật chưa?
+     → Kiểm tra file .env trong thư mục backend đã có chưa?
+     → Kiểm tra database qlchungcu đã được tạo và import chưa?
+
+   → "Module not found"
+     → Chạy lại file RUN_PROJECT.bat, nó sẽ tự động cài đặt
+
+
+════════════════════════════════════════════════════════════════
+
+📚 XEM HƯỚNG DẪN CHI TIẾT HƠN:
+
+   → HUONG_DAN_NHANH.md (Hướng dẫn nhanh 3 bước)
+   → HUONG_DAN_CHAY_XAMPP.md (Hướng dẫn chi tiết đầy đủ)
+
+
+════════════════════════════════════════════════════════════════
+
+✨ TÓM TẮT CÁC FILE QUAN TRỌNG:
+
+   • RUN_PROJECT.bat        → Chạy cả project (Backend + Frontend)
+   • TAO_FILE_ENV.bat       → Tạo file cấu hình .env tự động
+   • Database/qlchungcu.sql → File database để import
+
+
+════════════════════════════════════════════════════════════════
+
+Chúc bạn thành công! 🎉
+
+
